@@ -1,4 +1,4 @@
-# CVCL — Computer Vision C Library
+# CVCL - Computer Vision C Library
 
 [![CI](https://github.com/kavishka-dot/cvcl/actions/workflows/ci.yml/badge.svg)](https://github.com/kavishka-dot/cvcl/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -15,7 +15,7 @@ High-performance computer vision primitives in pure C99. Designed for edge deplo
 
 **Composable, not monolithic.** CVCL provides a kernel library of CV primitives, not a framework. It sits below OpenCV, not beside it.
 
-**SIMD-ready layout.** Row stride is always 64-byte aligned. This is not aesthetic — it means your AVX-512 / NEON / SVE inner loops never straddle a cache line boundary.
+**SIMD-ready layout.** Row stride is always 64-byte aligned. This is not aesthetic, it means your AVX-512 / NEON / SVE inner loops never straddle a cache line boundary.
 
 ---
 
@@ -299,4 +299,4 @@ This makes CVCL suitable for deployment on resource-constrained targets (RTOS, b
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE).
+Apache License 2.0 - see [LICENSE](LICENSE).
