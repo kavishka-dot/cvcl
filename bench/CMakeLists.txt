@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
 add_executable(bench_blur bench_blur.c)
+add_executable(bench_flip bench_flip.c)
 target_link_libraries(bench_blur PRIVATE cvcl cvcl_compile_options)
+target_link_libraries(bench_flip PRIVATE cvcl m)
 
 # Release flags for benchmarking
 if(NOT MSVC)

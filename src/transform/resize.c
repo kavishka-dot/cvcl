@@ -203,13 +203,24 @@ cvcl_result_t cvcl_flip_v(cvcl_image_t *img) {
     cvcl_i32 row_bytes = img->width * img->channels * (cvcl_i32)img->depth;
     cvcl_i32 half_h = img->height / 2;
 
+    /* Temporary row buffer for efficient row swapping */
+    cvcl_u8 *tmp = (cvcl_u8 *)malloc((cvcl_size)row_bytes);
+    if (!tmp)
+        return CVCL_ERR_ALLOC;
+
     for (cvcl_i32 y = 0; y < half_h; y++) {
         cvcl_u8 *row_a = cvcl_image_row(img, y);
         cvcl_u8 *row_b = cvcl_image_row(img, img->height - 1 - y);
-        for (cvcl_i32 k = 0; k < row_bytes; k++) {
+        /*for (cvcl_i32 k = 0; k < row_bytes; k++) {
             cvcl_u8 tmp = row_a[k]; row_a[k] = row_b[k]; row_b[k] = tmp;
-        }
+        }*/
+        memcpy(tmp,   row_a, (cvcl_size)row_bytes);
+        memcpy(row_a, row_b, (cvcl_size)row_bytes);
+        memcpy(row_b, tmp,   (cvcl_size)row_bytes);
     }
+
+    free(tmp);
+    
     return CVCL_OK;
 }
 
