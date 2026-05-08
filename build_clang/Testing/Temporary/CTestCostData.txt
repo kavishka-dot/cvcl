@@ -1,0 +1,10 @@
+test_image 1 0.00198305
+test_io 1 0.00163427
+test_transform 1 0.00150825
+test_filter 1 0.00205046
+test_morph 1 0.00149236
+test_correctness 1 0.00917344
+test_edge_cases 1 0.00185321
+test_memory 1 0.0243037
+test_perf 1 5.27658
+---

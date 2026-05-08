@@ -1,0 +1,272 @@
+Start testing: May 08 08:04 UTC
+----------------------------------------------------------
+1/9 Testing: test_image
+1/9 Test: test_image
+Command: "/home/claude/cvcl/build_clang/tests/test_image"
+Directory: /home/claude/cvcl/build_clang/tests
+"test_image" start time: May 08 08:04 UTC
+Output:
+----------------------------------------------------------
+=== test_image ===
+  test_create_free                        PASS
+  test_create_invalid_args                PASS
+  test_zero_initialized                   PASS
+  test_view_zero_copy                     PASS
+  test_clone                              PASS
+  test_custom_allocator                   PASS
+  test_pixel_rw_u8                        PASS
+  test_buffer_size                        PASS
+
+8/8 tests passed.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"test_image" end time: May 08 08:04 UTC
+"test_image" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/9 Testing: test_io
+2/9 Test: test_io
+Command: "/home/claude/cvcl/build_clang/tests/test_io"
+Directory: /home/claude/cvcl/build_clang/tests
+"test_io" start time: May 08 08:04 UTC
+Output:
+----------------------------------------------------------
+=== test_io ===
+  test_ppm_rgb_roundtrip                  PASS
+  test_pgm_gray_roundtrip                 PASS
+  test_in_memory_encode                   PASS
+  test_read_nonexistent                   PASS
+
+4/4 tests passed.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"test_io" end time: May 08 08:04 UTC
+"test_io" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/9 Testing: test_transform
+3/9 Test: test_transform
+Command: "/home/claude/cvcl/build_clang/tests/test_transform"
+Directory: /home/claude/cvcl/build_clang/tests
+"test_transform" start time: May 08 08:04 UTC
+Output:
+----------------------------------------------------------
+=== test_transform ===
+  test_resize_nearest_identity            PASS
+  test_resize_nearest_upscale             PASS
+  test_flip_h                             PASS
+  test_flip_v                             PASS
+  test_double_flip_identity               PASS
+  test_convert_rgb_to_gray                PASS
+  test_crop_zero_copy                     PASS
+
+7/7 tests passed.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"test_transform" end time: May 08 08:04 UTC
+"test_transform" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/9 Testing: test_filter
+4/9 Test: test_filter
+Command: "/home/claude/cvcl/build_clang/tests/test_filter"
+Directory: /home/claude/cvcl/build_clang/tests
+"test_filter" start time: May 08 08:04 UTC
+Output:
+----------------------------------------------------------
+=== test_filter ===
+  test_identity_kernel                    PASS
+  test_gaussian_blur_uniform              PASS
+  test_gaussian_blur_reduces_noise        PASS
+  test_add_clamped                        PASS
+  test_sub_clamped                        PASS
+
+5/5 tests passed.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"test_filter" end time: May 08 08:04 UTC
+"test_filter" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/9 Testing: test_morph
+5/9 Test: test_morph
+Command: "/home/claude/cvcl/build_clang/tests/test_morph"
+Directory: /home/claude/cvcl/build_clang/tests
+"test_morph" start time: May 08 08:04 UTC
+Output:
+----------------------------------------------------------
+=== test_morph ===
+  test_dilate_expands_bright              PASS
+  test_erode_shrinks_bright               PASS
+  test_dilate_then_erode_identity_on_full PASS
+  test_open_removes_speck                 PASS
+  test_close_fills_hole                   PASS
+  test_threshold_binary                   PASS
+  test_threshold_binary_inv               PASS
+  test_otsu_bimodal                       PASS
+  test_histogram_counts                   PASS
+  test_equalize_hist_uniform              PASS
+
+10/10 tests passed.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"test_morph" end time: May 08 08:04 UTC
+"test_morph" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/9 Testing: test_correctness
+6/9 Test: test_correctness
+Command: "/home/claude/cvcl/build_clang/tests/test_correctness"
+Directory: /home/claude/cvcl/build_clang/tests
+"test_correctness" start time: May 08 08:04 UTC
+Output:
+----------------------------------------------------------
+=== test_correctness ===
+
+Numerical correctness:
+  test_gaussian_uniform_mean                          PASS
+  test_box_matches_naive                              PASS
+  test_median_exact                                   PASS
+  test_sobel_ramp                                     PASS
+  test_canny_step_edge                                PASS
+  test_affine_identity                                PASS
+  test_rotate_4x_identity                             PASS
+  test_bicubic_constant                               PASS
+
+Boundary and edge cases:
+  test_1x1_pipeline                                   PASS
+  test_1xN_image                                      PASS
+  test_Nx1_image                                      PASS
+  test_large_kernel_small_image                       PASS
+  test_full_view_equals_original                      PASS
+
+Draw correctness:
+  test_line_horizontal_pixel_count                    PASS
+  test_filled_rect_pixel_count                        PASS
+  test_circle_within_bounds                           PASS
+  test_text_renders_nonzero                           PASS
+
+Memory and determinism:
+  test_1000_alloc_free_no_crash                       PASS
+  test_canny_deterministic                            PASS
+  test_png_roundtrip                                  PASS
+
+Cross-module pipeline:
+  test_full_pipeline                                  PASS
+
+21/21 tests passed.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"test_correctness" end time: May 08 08:04 UTC
+"test_correctness" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/9 Testing: test_edge_cases
+7/9 Test: test_edge_cases
+Command: "/home/claude/cvcl/build_clang/tests/test_edge_cases"
+Directory: /home/claude/cvcl/build_clang/tests
+"test_edge_cases" start time: May 08 08:04 UTC
+Output:
+----------------------------------------------------------
+=== test_edge_cases ===
+  test_1x1_create_free                                PASS
+  test_1x1_gaussian                                   PASS
+  test_1x1_canny                                      PASS
+  test_1xN_blur                                       PASS
+  test_Nx1_blur                                       PASS
+  test_large_kernel_small_image                       PASS
+  test_view_full_image                                PASS
+  test_view_single_pixel                              PASS
+  test_view_clamped_roi                               PASS
+  test_fill_free_clean                                PASS
+  test_threshold_boundary_values                      PASS
+  test_erode_idempotent                               PASS
+  test_resize_up_down_nearest                         PASS
+
+test_edge_cases: 13/13 passed.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"test_edge_cases" end time: May 08 08:04 UTC
+"test_edge_cases" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/9 Testing: test_memory
+8/9 Test: test_memory
+Command: "/home/claude/cvcl/build_clang/tests/test_memory"
+Directory: /home/claude/cvcl/build_clang/tests
+"test_memory" start time: May 08 08:04 UTC
+Output:
+----------------------------------------------------------
+=== test_memory ===
+  test_no_leak_1000_allocs                            PASS
+  test_clone_chain_no_leak                            PASS
+  test_pipeline_no_leak                               PASS
+  test_canny_deterministic                            PASS
+  test_gaussian_deterministic                         PASS
+  test_arena_pipeline                                 PASS
+  test_add_output_stable                              PASS
+  test_free_null_data_noop                            PASS
+  test_free_null_img_noop                             PASS
+
+test_memory: 9/9 passed.
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"test_memory" end time: May 08 08:04 UTC
+"test_memory" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/9 Testing: test_perf
+9/9 Test: test_perf
+Command: "/home/claude/cvcl/build_clang/tests/test_perf"
+Directory: /home/claude/cvcl/build_clang/tests
+"test_perf" start time: May 08 08:04 UTC
+Output:
+----------------------------------------------------------
+=== test_perf ===
+1920x1080 RGB
+
+Gaussian blur:
+  gaussian k=5  RGB                            PASS 14.3 Mpix/s
+  gaussian k=15 RGB                            PASS 5.4 Mpix/s
+
+Box blur (O(1) sliding window):
+  box k=5   RGB                                PASS 28.0 Mpix/s
+  box k=63  RGB                                PASS 28.2 Mpix/s
+
+Pixel-wise:
+  add saturating RGB                           PASS 971.6 Mpix/s
+
+Morphology (grayscale):
+  erode 5x5 gray                               PASS 47.5 Mpix/s
+
+Threshold (grayscale):
+  threshold binary                             PASS 436.3 Mpix/s
+
+  box k=63 within 3x cost of k=5               PASS ratio=1.0x
+
+8/8 tests passed.
+<end of output>
+Test time =   5.28 sec
+----------------------------------------------------------
+Test Passed.
+"test_perf" end time: May 08 08:04 UTC
+"test_perf" time elapsed: 00:00:05
+----------------------------------------------------------
+
+End testing: May 08 08:04 UTC
