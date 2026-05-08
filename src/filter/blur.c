@@ -246,10 +246,17 @@ cvcl_result_t cvcl_blur_box(cvcl_image_t       *dst,
     cvcl_i32 w = src->width, h = src->height, ch = src->channels;
     cvcl_i32 half = ksize / 2;
     cvcl_i32 n    = w * ch;   /* flat: treat all channels as one wide row */
-
     /* Reciprocal: (1<<20)/ksize -- avoids per-pixel integer divide */
-    cvcl_u32 inv   = (1u << 20) / (cvcl_u32)ksize;
+    //cvcl_u32 inv   = (1u << 20) / (cvcl_u32)ksize;
+    //cvcl_u32 shift = 20;
+    
+    /* Rounded reciprocal for better accuracy */
     cvcl_u32 shift = 20;
+    cvcl_u32 inv =
+        ((1u << shift) + ((cvcl_u32)ksize >> 1)) /
+        (cvcl_u32)ksize;
+
+    #define BOX_RND (1u << (shift - 1))
 
     /* Intermediate image */
     cvcl_image_t mid;
@@ -272,7 +279,8 @@ cvcl_result_t cvcl_blur_box(cvcl_image_t       *dst,
             for (cvcl_i32 k = -half; k <= half; k++)
                 s += sr[CVCL_CLAMP(k, 0, w-1) * ch + i];
             acc[i] = s;
-            mr[i]  = (cvcl_u8)((s * inv) >> shift);
+            //mr[i]  = (cvcl_u8)((s * inv) >> shift);
+            mr[i] = (cvcl_u8)((s * inv + BOX_RND) >> shift);
         }
 
         /* Slide right -- flat over channels */
@@ -282,7 +290,8 @@ cvcl_result_t cvcl_blur_box(cvcl_image_t       *dst,
             for (cvcl_i32 c = 0; c < ch; c++) {
                 cvcl_u32 v = acc[(cvcl_size)(x-1)*ch+c] + sr[ai+c] - sr[si+c];
                 acc[(cvcl_size)x*ch+c] = v;
-                mr[x*ch+c] = (cvcl_u8)((v * inv) >> shift);
+                //mr[x*ch+c] = (cvcl_u8)((v * inv) >> shift);
+                mr[x*ch+c] = (cvcl_u8)((v * inv + BOX_RND) >> shift);
             }
         }
     }
@@ -303,7 +312,8 @@ cvcl_result_t cvcl_blur_box(cvcl_image_t       *dst,
     {
         cvcl_u8 * CVCL_RESTRICT dr = cvcl_image_row(dst, 0);
         for (cvcl_i32 i = 0; i < n; i++)
-            dr[i] = (cvcl_u8)((cacc[i] * inv) >> shift);
+            //dr[i] = (cvcl_u8)((cacc[i] * inv) >> shift);
+            dr[i] = (cvcl_u8)((cacc[i] * inv + BOX_RND) >> shift);
     }
 
     /* Slide down */
@@ -318,7 +328,8 @@ cvcl_result_t cvcl_blur_box(cvcl_image_t       *dst,
         for (cvcl_i32 i = 0; i < n; i++) {
             cacc[i] += ar[i];
             cacc[i] -= sr2[i];
-            dr[i] = (cvcl_u8)((cacc[i] * inv) >> shift);
+            //dr[i] = (cvcl_u8)((cacc[i] * inv) >> shift);
+            dr[i] = (cvcl_u8)((cacc[i] * inv + BOX_RND) >> shift);
         }
     }
 

@@ -137,6 +137,31 @@ TEST(test_sub_clamped) {
     cvcl_image_free(&dst, NULL);
 }
 
+TEST(test_box_blur_uniform_preserves_value) {
+    cvcl_image_t src, dst;
+
+    cvcl_image_create(&src, 32, 32, 1, CVCL_DEPTH_U8, NULL);
+    cvcl_image_create(&dst, 32, 32, 1, CVCL_DEPTH_U8, NULL);
+
+    /* Flat image */
+    for (cvcl_i32 y = 0; y < 32; y++)
+        for (cvcl_i32 x = 0; x < 32; x++)
+            cvcl_set_u8(&src, x, y, 0, 100);
+
+    cvcl_result_t rc =
+        cvcl_blur_box(&dst, &src, 3, CVCL_BORDER_REPLICATE);
+
+    ASSERT_EQ(rc, CVCL_OK);
+
+    /* Every pixel should remain exactly 100 */
+    for (cvcl_i32 y = 0; y < 32; y++)
+        for (cvcl_i32 x = 0; x < 32; x++)
+            ASSERT_EQ(cvcl_get_u8(&dst, x, y, 0), 100);
+
+    cvcl_image_free(&src, NULL);
+    cvcl_image_free(&dst, NULL);
+}
+
 int main(void) {
     printf("=== test_filter ===\n");
     RUN(test_identity_kernel);
@@ -144,6 +169,7 @@ int main(void) {
     RUN(test_gaussian_blur_reduces_noise);
     RUN(test_add_clamped);
     RUN(test_sub_clamped);
+    RUN(test_box_blur_uniform_preserves_value);
     printf("\n%d/%d tests passed.\n", g_tests_run - g_tests_failed, g_tests_run);
     return g_tests_failed > 0 ? 1 : 0;
 }
