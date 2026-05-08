@@ -7,7 +7,6 @@
 
 High-performance computer vision primitives in pure C99. Designed for edge deployment, deterministic memory control, and clean FFI consumption from Rust, Python, Go, and Zig.
 
-<img width="1965" height="461" alt="image" src="https://github.com/user-attachments/assets/7b8411b5-740a-4eaf-b511-2505fc56c9d2" />
 
 
 ---
