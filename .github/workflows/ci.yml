@@ -1,0 +1,219 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # =========================================================================
+  # Linux -- GCC, Debug + Release
+  # =========================================================================
+  linux-gcc:
+    name: Linux (GCC)
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get install -y cmake gcc build-essential
+
+      - name: Configure (${{ matrix.build_type }})
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCVCL_BUILD_TESTS=ON \
+            -DCVCL_BUILD_EXAMPLES=ON \
+            -DCVCL_BUILD_BENCH=OFF
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure --timeout 60
+
+  # =========================================================================
+  # Linux -- Clang
+  # =========================================================================
+  linux-clang:
+    name: Linux (Clang)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get install -y cmake clang build-essential
+
+      - name: Configure
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_C_COMPILER=clang \
+            -DCVCL_BUILD_TESTS=ON \
+            -DCVCL_BUILD_EXAMPLES=OFF \
+            -DCVCL_BUILD_BENCH=OFF
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure --timeout 60
+
+  # =========================================================================
+  # Linux -- AddressSanitizer (memory safety)
+  # =========================================================================
+  linux-asan:
+    name: Linux (ASAN + UBSAN)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get install -y cmake gcc build-essential
+
+      - name: Configure with sanitizers
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCVCL_BUILD_TESTS=ON \
+            -DCVCL_BUILD_EXAMPLES=OFF \
+            -DCVCL_BUILD_BENCH=OFF \
+            -DCVCL_SANITIZE=ON
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test (ASAN + UBSAN)
+        run: ctest --test-dir build --output-on-failure --timeout 120
+        env:
+          ASAN_OPTIONS: detect_leaks=0
+          UBSAN_OPTIONS: print_stacktrace=1
+
+  # =========================================================================
+  # macOS -- Apple Clang
+  # =========================================================================
+  macos:
+    name: macOS (Apple Clang)
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CMake
+        run: brew install cmake
+
+      - name: Configure
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCVCL_BUILD_TESTS=ON \
+            -DCVCL_BUILD_EXAMPLES=OFF \
+            -DCVCL_BUILD_BENCH=OFF
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure --timeout 60
+
+  # =========================================================================
+  # Windows -- MSVC
+  # =========================================================================
+  windows-msvc:
+    name: Windows (MSVC)
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure (${{ matrix.build_type }})
+        run: |
+          cmake -B build `
+            -DCVCL_BUILD_TESTS=ON `
+            -DCVCL_BUILD_EXAMPLES=ON `
+            -DCVCL_BUILD_BENCH=OFF
+
+      - name: Build
+        run: cmake --build build --config ${{ matrix.build_type }} --parallel
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure --timeout 60
+        env:
+          CTEST_CONFIGURATION_TYPE: ${{ matrix.build_type }}
+
+  # =========================================================================
+  # Windows -- MinGW (GCC on Windows)
+  # =========================================================================
+  windows-mingw:
+    name: Windows (MinGW)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MinGW
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: >-
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-ninja
+
+      - name: Configure
+        shell: msys2 {0}
+        run: |
+          cmake -B build \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCVCL_BUILD_TESTS=ON \
+            -DCVCL_BUILD_EXAMPLES=OFF \
+            -DCVCL_BUILD_BENCH=OFF
+
+      - name: Build
+        shell: msys2 {0}
+        run: cmake --build build
+
+      - name: Test
+        shell: msys2 {0}
+        run: ctest --test-dir build --output-on-failure --timeout 60
+
+  # =========================================================================
+  # No-SIMD build -- ensure scalar fallbacks compile and pass
+  # =========================================================================
+  no-simd:
+    name: Linux (No SIMD)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get install -y cmake gcc build-essential
+
+      - name: Configure (SIMD disabled)
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCVCL_BUILD_TESTS=ON \
+            -DCVCL_BUILD_EXAMPLES=OFF \
+            -DCVCL_BUILD_BENCH=OFF \
+            -DCVCL_NO_SIMD=ON
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure --timeout 60
