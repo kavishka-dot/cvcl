@@ -21,6 +21,9 @@ static cvcl_result_t resize_nearest(cvcl_image_t       *dst,
     cvcl_i32 depth = (cvcl_i32)src->depth;
     cvcl_i32 pixel_bytes = ch * depth;
 
+    if (pixel_bytes <= 0 || (cvcl_size)dw * (cvcl_size)pixel_bytes > (cvcl_size)dst->stride)
+        return CVCL_ERR_OVERFLOW;
+
     for (cvcl_i32 dy = 0; dy < dh; dy++) {
         cvcl_i32 sy = (dy * sh) / dh;
 
@@ -303,11 +306,14 @@ cvcl_result_t cvcl_flip_v(cvcl_image_t *img) {
     CVCL_CHECK_NULL(img);
     CVCL_CHECK_NULL(img->data);
 
-    cvcl_i32 row_bytes = img->width * img->channels * (cvcl_i32)img->depth;
+    cvcl_size row_bytes = (cvcl_size)img->stride;
     cvcl_i32 half_h = img->height / 2;
 
+    if (row_bytes == 0)
+        return CVCL_ERR_OVERFLOW;
+
     /* Temporary row buffer for efficient row swapping */
-    cvcl_u8 *tmp = (cvcl_u8 *)malloc((cvcl_size)row_bytes);
+    cvcl_u8 *tmp = (cvcl_u8 *)malloc(row_bytes);
 
     if (!tmp)
         return CVCL_ERR_ALLOC;
@@ -316,9 +322,9 @@ cvcl_result_t cvcl_flip_v(cvcl_image_t *img) {
         cvcl_u8 *row_a = cvcl_image_row(img, y);
         cvcl_u8 *row_b = cvcl_image_row(img, img->height - 1 - y);
 
-        memcpy(tmp,   row_a, (cvcl_size)row_bytes);
-        memcpy(row_a, row_b, (cvcl_size)row_bytes);
-        memcpy(row_b, tmp,   (cvcl_size)row_bytes);
+        memcpy(tmp,   row_a, row_bytes);
+        memcpy(row_a, row_b, row_bytes);
+        memcpy(row_b, tmp,   row_bytes);
     }
 
     free(tmp);
